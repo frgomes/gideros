@@ -1,50 +1,58 @@
-# sudo rm /usr/lib/libpystring.1.dylib
-# sudo rm /usr/lib/libgvfs.1.dylib
-# sudo rm /usr/lib/libgid.1.dylib
-# sudo rm /usr/lib/liblua.1.dylib
-# sudo rm /usr/lib/libgideros.1.dylib
+#!/bin/bash -x
 
-cd ..
+dir=$(dirname $(test -L "$BASH_SOURCE" && readlink -f "$BASH_SOURCE" || echo "$BASH_SOURCE"))
 
-cd libpystring
-$QT/bin/qmake libpystring.pro
+sudo apt-get install qt5-default qttools5-dev-tools qdbus-qt5 qt5-qmake python-pyqt5 python3-pyqt5 pyqt5-dev-tools -y
+
+
+PREFIX=/usr/local
+GIDEROS_HOME=$HOME/workspace/gideros
+QMAKE="$(which qmake) PREFIX=${PREFIX}"
+
+sudo mkdir -p $PREFIX/lib
+
+pushd ${GIDEROS_HOME}/libpystring
+$QMAKE libpystring.pro
 make clean
 make
-# sudo cp libpystring.1.dylib /usr/lib
-cd ..
+sudo make dist
+popd
 
-cd libgvfs
-$QT/bin/qmake libgvfs.pro
+pushd ${GIDEROS_HOME}/libgvfs
+$QMAKE libgvfs.pro
 make clean
 make
-# sudo cp libgvfs.1.dylib /usr/lib
-cd ..
+sudo make dist
+popd
 
-cd libgid
-$QT/bin/qmake libgid_qt5.pro
+pushd ${GIDEROS_HOME}/libgid
+$QMAKE libgid_qt5.pro
 make clean
 make
-# sudo cp libgid.1.dylib /usr/lib
-cd ..
+sudo make dist
+popd
 
-cd lua
-$QT/bin/qmake lua.pro
+pushd ${GIDEROS_HOME}/lua
+$QMAKE lua.pro
 make clean
 make
-# sudo cp liblua.1.dylib /usr/lib
-cd ..
+sudo make dist
+popd
 
-cd libgideros
-$QT/bin/qmake libgideros.pro
+pushd ${GIDEROS_HOME}/libgideros
+$QMAKE libgideros.pro
 make clean
 make
-# sudo cp libgideros.1.dylib /usr/lib
-cd ..
+sudo make dist
+popd
 
-# rm -rf Sdk
-mkdir Sdk
-cd Sdk
-mkdir include
+
+
+
+function not_needed {
+rm -r -f ${GIDEROS_HOME}/SDK
+mkdir -p ${GIDEROS_HOME}/SDK/{include,lib/desktop}
+pushd ${GIDEROS_HOME}/SDK
 cp ../libgideros/gideros.h include
 cp ../libgideros/gplugin.h include
 cp ../libgideros/gproxy.h include
@@ -61,21 +69,14 @@ cp ../libgid/include/glog.h include
 cp ../libgid/include/gapplication.h include
 cp ../libgid/include/gevent.h include
 
-
-mkdir lib
-mkdir lib/desktop
 cp ../libgvfs/libgvfs.1.dylib lib/desktop
 cp ../libgideros/libgideros.1.dylib lib/desktop
 cp ../lua/liblua.1.dylib lib/desktop
 cp ../libgid/libgid.1.dylib lib/desktop
 
-cd lib/desktop
 ln -s libgvfs.1.dylib libgvfs.dylib
 ln -s libgideros.1.dylib libgideros.dylib
 ln -s liblua.1.dylib liblua.dylib
 ln -s libgid.1.dylib libgid.dylib
-cd ../..
-
-cd ..
-
-cd scripts
+popd
+}

@@ -1,39 +1,53 @@
-cd ..
+#!/bin/bash -x
 
-cd texturepacker
-$QT/bin/qmake texturepacker.pro
+dir=$(dirname $(test -L "$BASH_SOURCE" && readlink -f "$BASH_SOURCE" || echo "$BASH_SOURCE"))
+
+sudo apt-get install qt5-default qttools5-dev-tools qdbus-qt5 qt5-qmake python-pyqt5 python3-pyqt5 pyqt5-dev-tools -y
+
+
+PREFIX=/usr/local
+GIDEROS_HOME=$HOME/workspace/gideros
+QMAKE="$(which qmake) PREFIX=${PREFIX}"
+
+
+pushd ${GIDEROS_HOME}/texturepacker
+$QMAKE texturepacker.pro
 make
-cd ..
+sudo make dist
+popd
 
-cd fontcreator
-$QT/bin/qmake fontcreator.pro
+pushd ${GIDEROS_HOME}/fontcreator
+$QMAKE fontcreator.pro
 make
-cd ..
+sudo make dist
+popd
 
-cd ui
-$QT/bin/qmake ui.pro
+pushd ${GIDEROS_HOME}/ui
+$QMAKE ui.pro
 make
-cd ..
+sudo make dist
+popd
 
-cd player
-$QT/bin/qmake player_qt5.pro
+pushd ${GIDEROS_HOME}/player
+$QMAKE player_qt5.pro
 make
-cd ..
+sudo make dist
+popd
 
-cd gdrdeamon
-$QT/bin/qmake gdrdeamon.pro
+pushd ${GIDEROS_HOME}/gdrdeamon
+$QMAKE gdrdeamon.pro
 make
-cd ..
+sudo make dist
+popd
 
-cd gdrbridge
-$QT/bin/qmake gdrbridge.pro
+pushd ${GIDEROS_HOME}/gdrbridge
+$QMAKE gdrbridge.pro
 make
-cd ..
+sudo make dist
+popd
 
-cd gdrexport
-$QT/bin/qmake gdrexport.pro
+pushd ${GIDEROS_HOME}/gdrexport
+$QMAKE gdrexport.pro
 make
-cd ..
-
-
-cd scripts
+sudo make dist
+popd
